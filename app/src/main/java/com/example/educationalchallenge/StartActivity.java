@@ -1,6 +1,8 @@
 package com.example.educationalchallenge;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
@@ -19,9 +21,25 @@ public class StartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_start);
+
+        loginButton = findViewById(R.id.login_button);
+        registerButton = findViewById(R.id.register_button);
+
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(StartActivity.this, RegisterActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(StartActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
-    public void goToRegisterActivity() {
-
-    }
 }

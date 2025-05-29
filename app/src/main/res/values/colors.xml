@@ -13,4 +13,20 @@
 
     <color name="md_theme_light_error">#FF7A6F</color>
     <color name="md_theme_light_onError">#FFFFFF</color>
+
+    <color name="md_theme_dark_primary">#8C9EFF</color>
+    <color name="md_theme_dark_onPrimary">#000000</color>
+
+    <color name="md_theme_dark_secondary">#00BFA6</color>
+    <color name="md_theme_dark_onSecondary">#000000</color>
+
+    <color name="md_theme_dark_background">#121212</color>
+    <color name="md_theme_dark_onBackground">#E0E0E0</color>
+
+    <color name="md_theme_dark_surface">#1E1E1E</color>
+    <color name="md_theme_dark_onSurface">#E0E0E0</color>
+
+    <color name="md_theme_dark_error">#EF5350</color>
+    <color name="md_theme_dark_onError">#000000</color>
+
 </resources>
