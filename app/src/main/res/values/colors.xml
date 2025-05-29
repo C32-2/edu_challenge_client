@@ -1,18 +1,21 @@
 <resources>
-    <color name="md_theme_light_primary">#3B57E8</color>
+    <color name="md_theme_light_primary">#4A6CF7</color>          <!-- глубокий синий -->
     <color name="md_theme_light_onPrimary">#FFFFFF</color>
 
-    <color name="md_theme_light_secondary">#37CFC1</color>
+    <color name="md_theme_light_secondary">#FF8C42</color>         <!-- мягкий оранжевый -->
     <color name="md_theme_light_onSecondary">#000000</color>
 
-    <color name="md_theme_light_background">#F7F2EB</color>
-    <color name="md_theme_light_onBackground">#4B4B4B</color>
+    <color name="md_theme_light_background">#FAF9F7</color>        <!-- почти белый с лёгким теплом -->
+    <color name="md_theme_light_onBackground">#3A3A3A</color>      <!-- темно-серый -->
 
-    <color name="md_theme_light_surface">#FFD8B5</color>
-    <color name="md_theme_light_onSurface">#4B4B4B</color>
+    <color name="md_theme_light_surface">#FFF1E6</color>           <!-- светлый персиковый -->
+    <color name="md_theme_light_onSurface">#3A3A3A</color>
 
-    <color name="md_theme_light_error">#FF7A6F</color>
+    <color name="md_theme_light_error">#E94B3C</color>             <!-- насыщенный красный -->
     <color name="md_theme_light_onError">#FFFFFF</color>
+
+
+
 
     <color name="md_theme_dark_primary">#8C9EFF</color>
     <color name="md_theme_dark_onPrimary">#000000</color>
