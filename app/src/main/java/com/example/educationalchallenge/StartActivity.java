@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.example.educationalchallenge.api.ApiClient;
 import com.example.educationalchallenge.api.ApiService;
@@ -33,6 +34,8 @@ public class StartActivity extends AppCompatActivity {
     private EditText passwordEditText;
     private JwtManager jwtManager;
     private ApiService apiService;
+
+    private TextView infoText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +56,8 @@ public class StartActivity extends AppCompatActivity {
 
         emailEditText = findViewById(R.id.email_edit_text);
         passwordEditText = findViewById(R.id.password_edit_text);
+        infoText = findViewById(R.id.info_text);
+
         Button loginButton = findViewById(R.id.login_button);
         TextView registerTextView = findViewById(R.id.register_text);
 
@@ -66,12 +71,13 @@ public class StartActivity extends AppCompatActivity {
         String password = passwordEditText.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Введите email и пароль", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Введите данные до конца!", Toast.LENGTH_SHORT).show();
             return;
         }
 
         AuthRequest request = new AuthRequest(email, password);
         apiService.login(request).enqueue(new Callback<AuthResponse>() {
+
             @Override
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
@@ -79,7 +85,7 @@ public class StartActivity extends AppCompatActivity {
                     startActivity(new Intent(StartActivity.this, MainActivity.class));
                     finish();
                 } else {
-                    Toast.makeText(StartActivity.this, "Неверный логин или пароль", Toast.LENGTH_SHORT).show();
+                    showErrorMessage("Неверный логин или пароль");
                 }
             }
 
@@ -115,5 +121,11 @@ public class StartActivity extends AppCompatActivity {
             registerTextView.setMovementMethod(LinkMovementMethod.getInstance());
             registerTextView.setHighlightColor(Color.TRANSPARENT);
         }
+    }
+
+    private void showErrorMessage(String message) {
+        infoText.setText(message);
+        infoText.setTextColor(ContextCompat.getColor(this, R.color.md_theme_light_error));
+        infoText.setAlpha(1f);
     }
 }

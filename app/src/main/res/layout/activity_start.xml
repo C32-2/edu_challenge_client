@@ -17,7 +17,7 @@
         app:layout_constraintHorizontal_bias="0.539"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.441" />
+        app:layout_constraintVertical_bias="0.452" />
 
     <TextView
         android:id="@+id/main_text"
@@ -80,15 +80,29 @@
 
     <TextView
         android:id="@+id/register_text"
-        android:layout_width="285dp"
-        android:layout_height="26dp"
+        android:layout_width="286dp"
+        android:layout_height="27dp"
         android:gravity="center"
         android:text="Ещё нет аккаунта? Зарегистрироваться"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.539"
+        app:layout_constraintHorizontal_bias="0.536"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.507" />
+        app:layout_constraintVertical_bias="0.518" />
+
+    <TextView
+        android:id="@+id/info_text"
+        android:layout_width="291dp"
+        android:layout_height="24dp"
+        android:alpha="0.0"
+        android:gravity="center"
+        android:text="Неверный логин или пароль!"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.558"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.554" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
