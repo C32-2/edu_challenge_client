@@ -52,4 +52,23 @@ public class JwtManager {
             return null;
         }
     }
+
+    public static String getRoleFromToken(String jwt) {
+        try {
+            String[] parts = jwt.split("\\.");
+            String payload = parts[1];
+            byte[] decodedBytes = Base64.decode(payload, Base64.URL_SAFE | Base64.NO_WRAP);
+
+            String decodedPayload = new String(decodedBytes, StandardCharsets.UTF_8);
+            JSONObject jsonObject = new JSONObject(decodedPayload);
+
+            if (jsonObject.has("role")) {
+                return String.valueOf(jsonObject.getString("role"));
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
  }

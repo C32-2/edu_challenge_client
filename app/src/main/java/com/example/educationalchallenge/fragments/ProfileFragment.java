@@ -22,13 +22,16 @@ import com.example.educationalchallenge.api.ApiService;
 import com.example.educationalchallenge.dto.ProfileResponse;
 import com.example.educationalchallenge.security.JwtManager;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
 public class ProfileFragment extends Fragment {
 
     private TextView usernameTextView, nicknameTextView, roleTextView, levelTextView,
             idTextView, quizzesSolved, createdAtTextView;
-    private ProgressBar expProgressBar;
+    private ProgressBar expProgressBar, loadProgressBar;
     private Button editProfileButton;
-
     private JwtManager jwtManager;
     private ApiService apiService;
 
@@ -36,7 +39,6 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        // Инициализация вьюшек
         usernameTextView = view.findViewById(R.id.username_text);
         nicknameTextView = view.findViewById(R.id.nickname_text);
         roleTextView = view.findViewById(R.id.role_text);
@@ -46,9 +48,9 @@ public class ProfileFragment extends Fragment {
         quizzesSolved = view.findViewById(R.id.quizzes_solved_text);
         editProfileButton = view.findViewById(R.id.change_button);
         createdAtTextView = view.findViewById(R.id.created_date_text);
+        loadProgressBar = view.findViewById(R.id.load_progress_bar);
 
         setViewsVisibility(false);
-        expProgressBar.setVisibility(View.VISIBLE);
 
         jwtManager = new JwtManager(getContext());
         apiService = ApiClient.getApiService();
@@ -69,18 +71,17 @@ public class ProfileFragment extends Fragment {
         call.enqueue(new Callback<ProfileResponse>() {
             @Override
             public void onResponse(Call<ProfileResponse> call, Response<ProfileResponse> response) {
-                expProgressBar.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null) {
+                    loadProgressBar.setVisibility(View.GONE);
                     setUserData(response.body());
                 } else {
-                    Log.e("ProfileFragment", "Ошибка ответа: " + response.code());
+                    Log.e("ProfileFragment", "Ошибка ответа: " + response.body());
                     Toast.makeText(getContext(), "Ошибка при загрузке данных!", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ProfileResponse> call, Throwable t) {
-                expProgressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Ошибка при загрузке данных!", Toast.LENGTH_SHORT).show();
                 Log.e("ProfileFragment", "Ошибка при запросе профиля", t);
             }
@@ -94,7 +95,7 @@ public class ProfileFragment extends Fragment {
         nicknameTextView.setText("Новичок");
         roleTextView.setText("Роль: " + (response.role != null ? response.role : ""));
         levelTextView.setText("Уровень " + response.level + ", Опыт " + response.exp);
-        createdAtTextView.setText("Создан: " + (response.createdAt != null ? response.createdAt : ""));
+        createdAtTextView.setText("Создан: " + formatDate(response.createdDate));
         idTextView.setText("ID Пользователя: " + response.id);
         quizzesSolved.setText("Решено квизов: " + response.quizzesSolved);
 
@@ -111,5 +112,14 @@ public class ProfileFragment extends Fragment {
         quizzesSolved.setVisibility(visibility);
         editProfileButton.setVisibility(visibility);
         createdAtTextView.setVisibility(visibility);
+        expProgressBar.setVisibility(visibility);
+    }
+
+    private String formatDate(String rawDate) {
+        LocalDateTime dateTime = LocalDateTime.parse(rawDate);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", new Locale("ru"));
+        String formatted = dateTime.format(formatter);
+
+        return formatted;
     }
 }

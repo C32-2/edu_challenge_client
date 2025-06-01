@@ -14,9 +14,6 @@
     <color name="md_theme_light_error">#E94B3C</color>             <!-- насыщенный красный -->
     <color name="md_theme_light_onError">#FFFFFF</color>
 
-
-
-
     <color name="md_theme_dark_primary">#8C9EFF</color>
     <color name="md_theme_dark_onPrimary">#000000</color>
 
