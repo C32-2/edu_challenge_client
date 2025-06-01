@@ -1,5 +1,6 @@
 package com.example.educationalchallenge.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,13 +11,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 import com.example.educationalchallenge.R;
+import com.example.educationalchallenge.StartActivity;
 import com.example.educationalchallenge.api.ApiClient;
 import com.example.educationalchallenge.api.ApiService;
 import com.example.educationalchallenge.dto.ProfileResponse;
@@ -26,29 +25,24 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class ProfileFragment extends Fragment {
 
     private TextView usernameTextView, nicknameTextView, roleTextView, levelTextView,
             idTextView, quizzesSolved, createdAtTextView;
     private ProgressBar expProgressBar, loadProgressBar;
-    private Button editProfileButton;
+    private Button editProfileButton, logoutButton;
+
     private JwtManager jwtManager;
     private ApiService apiService;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-
-        usernameTextView = view.findViewById(R.id.username_text);
-        nicknameTextView = view.findViewById(R.id.nickname_text);
-        roleTextView = view.findViewById(R.id.role_text);
-        levelTextView = view.findViewById(R.id.level_exp_text);
-        expProgressBar = view.findViewById(R.id.exp_progress);
-        idTextView = view.findViewById(R.id.user_id_text);
-        quizzesSolved = view.findViewById(R.id.quizzes_solved_text);
-        editProfileButton = view.findViewById(R.id.change_button);
-        createdAtTextView = view.findViewById(R.id.created_date_text);
-        loadProgressBar = view.findViewById(R.id.load_progress_bar);
+        bindViews(view);
 
         setViewsVisibility(false);
 
@@ -67,27 +61,48 @@ public class ProfileFragment extends Fragment {
             return view;
         }
 
+        loadProfile(userId, jwt);
+
+        logoutButton.setOnClickListener(v -> showLogoutDialog());
+
+        return view;
+    }
+
+    private void bindViews(View view) {
+        usernameTextView = view.findViewById(R.id.username_text);
+        nicknameTextView = view.findViewById(R.id.nickname_text);
+        roleTextView = view.findViewById(R.id.role_text);
+        levelTextView = view.findViewById(R.id.level_exp_text);
+        expProgressBar = view.findViewById(R.id.exp_progress);
+        idTextView = view.findViewById(R.id.user_id_text);
+        quizzesSolved = view.findViewById(R.id.quizzes_solved_text);
+        editProfileButton = view.findViewById(R.id.change_button);
+        createdAtTextView = view.findViewById(R.id.created_date_text);
+        loadProgressBar = view.findViewById(R.id.load_progress_bar);
+        logoutButton = view.findViewById(R.id.logout_button);
+    }
+
+    private void loadProfile(String userId, String jwt) {
         Call<ProfileResponse> call = apiService.getProfile(userId, "Bearer " + jwt);
         call.enqueue(new Callback<ProfileResponse>() {
             @Override
             public void onResponse(Call<ProfileResponse> call, Response<ProfileResponse> response) {
+                loadProgressBar.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null) {
-                    loadProgressBar.setVisibility(View.GONE);
                     setUserData(response.body());
                 } else {
-                    Log.e("ProfileFragment", "Ошибка ответа: " + response.body());
+                    Log.e("ProfileFragment", "Ошибка ответа: " + response.message());
                     Toast.makeText(getContext(), "Ошибка при загрузке данных!", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ProfileResponse> call, Throwable t) {
+                loadProgressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Ошибка при загрузке данных!", Toast.LENGTH_SHORT).show();
                 Log.e("ProfileFragment", "Ошибка при запросе профиля", t);
             }
         });
-
-        return view;
     }
 
     private void setUserData(ProfileResponse response) {
@@ -113,13 +128,44 @@ public class ProfileFragment extends Fragment {
         editProfileButton.setVisibility(visibility);
         createdAtTextView.setVisibility(visibility);
         expProgressBar.setVisibility(visibility);
+        logoutButton.setVisibility(visibility);
     }
 
     private String formatDate(String rawDate) {
         LocalDateTime dateTime = LocalDateTime.parse(rawDate);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", new Locale("ru"));
-        String formatted = dateTime.format(formatter);
+        return dateTime.format(formatter);
+    }
 
-        return formatted;
+    private void showLogoutDialog() {
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_custom, null);
+
+        TextView title = dialogView.findViewById(R.id.dialog_title);
+        TextView message = dialogView.findViewById(R.id.dialog_message);
+        Button btnCancel = dialogView.findViewById(R.id.button_cancel);
+        Button btnConfirm = dialogView.findViewById(R.id.button_ok);
+
+        title.setText("Выход из аккаунта");
+        message.setText("Вы уверены, что хотите продолжить?");
+
+        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .setCancelable(false)
+                .create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        btnConfirm.setOnClickListener(v -> {
+            jwtManager.clearToken();
+            Intent intent = new Intent(requireContext(), StartActivity.class);
+            startActivity(intent);
+            dialog.dismiss();
+            requireActivity().finish();
+        });
+
+        dialog.show();
     }
 }
