@@ -2,6 +2,11 @@ package com.example.educationalchallenge.security;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Base64;
+
+import org.json.JSONObject;
+
+import java.nio.charset.StandardCharsets;
 
 public class JwtManager {
 
@@ -27,5 +32,24 @@ public class JwtManager {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(TOKEN_KEY);
         editor.apply();
+    }
+
+    public static String getIdFromToken(String jwt) {
+        try {
+            String[] parts = jwt.split("\\.");
+            String payload = parts[1];
+            byte[] decodedBytes = Base64.decode(payload, Base64.URL_SAFE | Base64.NO_WRAP);
+
+            String decodedPayload = new String(decodedBytes, StandardCharsets.UTF_8);
+            JSONObject jsonObject = new JSONObject(decodedPayload);
+
+            if (jsonObject.has("userId")) {
+                return String.valueOf(jsonObject.getInt("userId"));
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
     }
  }
