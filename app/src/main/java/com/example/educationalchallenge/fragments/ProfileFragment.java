@@ -91,7 +91,6 @@ public class ProfileFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     setUserData(response.body());
                 } else {
-                    Log.e("ProfileFragment", "Ошибка ответа: " + response.message());
                     Toast.makeText(getContext(), "Ошибка при загрузке данных!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -100,7 +99,6 @@ public class ProfileFragment extends Fragment {
             public void onFailure(Call<ProfileResponse> call, Throwable t) {
                 loadProgressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Ошибка при загрузке данных!", Toast.LENGTH_SHORT).show();
-                Log.e("ProfileFragment", "Ошибка при запросе профиля", t);
             }
         });
     }

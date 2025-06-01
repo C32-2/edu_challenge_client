@@ -3,7 +3,6 @@ package com.example.educationalchallenge;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -29,8 +28,8 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText passwordEditText;
     private Button registerButton;
     private TextView infoText;
-    private ApiService apiService;
     private ProgressBar progressBar;
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,15 +37,25 @@ public class RegisterActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
 
-        apiService = ApiClient.getApiService();
+        initViews();
+        initApi();
+        setupListeners();
+    }
 
+    private void initViews() {
         usernameEditText = findViewById(R.id.username_edit_text);
         emailEditText = findViewById(R.id.email_edit_text);
         passwordEditText = findViewById(R.id.password_edit_text);
         registerButton = findViewById(R.id.register_button);
         infoText = findViewById(R.id.info_text);
         progressBar = findViewById(R.id.progress_bar);
+    }
 
+    private void initApi() {
+        apiService = ApiClient.getApiService();
+    }
+
+    private void setupListeners() {
         registerButton.setOnClickListener(v -> performRegister());
     }
 
@@ -60,25 +69,23 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         RegisterRequest request = new RegisterRequest(username, email, password);
-        progressBar.setVisibility(View.VISIBLE);
-        apiService.register(request).enqueue(new Callback<Void>() {
+        progressBar.setVisibility(ProgressBar.VISIBLE);
+
+        apiService.register(request).enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
+                progressBar.setVisibility(ProgressBar.GONE);
                 if (response.isSuccessful()) {
                     Toast.makeText(RegisterActivity.this, "Регистрация прошла успешно!", Toast.LENGTH_SHORT).show();
-                    progressBar.setVisibility(View.GONE);
-                    Intent intent = new Intent(RegisterActivity.this, StartActivity.class);
-                    startActivity(intent);
-                    finish();
+                    navigateToStart();
                 } else {
-                    progressBar.setVisibility(View.GONE);
                     showErrorMessage("Пользователь с таким именем или email уже существует!");
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
+                progressBar.setVisibility(ProgressBar.GONE);
                 showErrorMessage("Ошибка сети! Попробуйте позже");
             }
         });
@@ -90,7 +97,7 @@ public class RegisterActivity extends AppCompatActivity {
             return false;
         }
 
-        if (!checkEmail(email)) {
+        if (!isValidEmail(email)) {
             showErrorMessage("Некорректная форма email!");
             return false;
         }
@@ -106,10 +113,16 @@ public class RegisterActivity extends AppCompatActivity {
     private void showErrorMessage(String message) {
         infoText.setText(message);
         infoText.setTextColor(ContextCompat.getColor(this, R.color.md_theme_light_error));
-        infoText.setVisibility(View.VISIBLE);
+        infoText.setVisibility(TextView.VISIBLE);
     }
 
-    private boolean checkEmail(String email) {
+    private boolean isValidEmail(String email) {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    private void navigateToStart() {
+        Intent intent = new Intent(this, StartActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

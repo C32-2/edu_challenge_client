@@ -52,7 +52,6 @@ public class JwtManager {
             return null;
         }
     }
-
     public static String getRoleFromToken(String jwt) {
         try {
             String[] parts = jwt.split("\\.");
