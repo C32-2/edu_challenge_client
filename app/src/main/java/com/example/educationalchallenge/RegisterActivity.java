@@ -3,8 +3,10 @@ package com.example.educationalchallenge;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +30,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Button registerButton;
     private TextView infoText;
     private ApiService apiService;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.password_edit_text);
         registerButton = findViewById(R.id.register_button);
         infoText = findViewById(R.id.info_text);
+        progressBar = findViewById(R.id.progress_bar);
 
         registerButton.setOnClickListener(v -> performRegister());
     }
@@ -56,22 +60,25 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         RegisterRequest request = new RegisterRequest(username, email, password);
-
+        progressBar.setVisibility(View.VISIBLE);
         apiService.register(request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(RegisterActivity.this, "Регистрация прошла успешно!", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
                     Intent intent = new Intent(RegisterActivity.this, StartActivity.class);
                     startActivity(intent);
                 } else {
+                    progressBar.setVisibility(View.GONE);
                     showErrorMessage("Пользователь с таким именем или email уже существует!");
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(RegisterActivity.this, "Ошибка сети: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
+                showErrorMessage("Ошибка сети! Попробуйте позже");
             }
         });
     }
@@ -98,7 +105,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void showErrorMessage(String message) {
         infoText.setText(message);
         infoText.setTextColor(ContextCompat.getColor(this, R.color.md_theme_light_error));
-        infoText.setAlpha(1f);
+        infoText.setVisibility(View.VISIBLE);
     }
 
     private boolean checkEmail(String email) {

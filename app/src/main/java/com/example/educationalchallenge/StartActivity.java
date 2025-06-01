@@ -10,6 +10,7 @@ import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,8 +35,8 @@ public class StartActivity extends AppCompatActivity {
     private EditText passwordEditText;
     private JwtManager jwtManager;
     private ApiService apiService;
-
     private TextView infoText;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +58,7 @@ public class StartActivity extends AppCompatActivity {
         emailEditText = findViewById(R.id.email_edit_text);
         passwordEditText = findViewById(R.id.password_edit_text);
         infoText = findViewById(R.id.info_text);
+        progressBar = findViewById(R.id.progress_bar);
 
         Button loginButton = findViewById(R.id.login_button);
         TextView registerTextView = findViewById(R.id.register_text);
@@ -67,6 +69,7 @@ public class StartActivity extends AppCompatActivity {
     }
 
     private void performLogin() {
+        infoText.setVisibility(View.GONE);
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
 
@@ -76,22 +79,26 @@ public class StartActivity extends AppCompatActivity {
         }
 
         AuthRequest request = new AuthRequest(email, password);
+        progressBar.setVisibility(View.VISIBLE);
         apiService.login(request).enqueue(new Callback<AuthResponse>() {
 
             @Override
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     jwtManager.saveToken(response.body().getToken());
+                    progressBar.setVisibility(View.GONE);
                     startActivity(new Intent(StartActivity.this, MainActivity.class));
                     finish();
                 } else {
+                    progressBar.setVisibility(View.GONE);
                     showErrorMessage("Неверный логин или пароль");
                 }
             }
 
             @Override
             public void onFailure(Call<AuthResponse> call, Throwable t) {
-                Toast.makeText(StartActivity.this, "Ошибка сети: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
+                showErrorMessage("Ошибка сети! Попробуйте позже");
             }
         });
     }
@@ -126,6 +133,6 @@ public class StartActivity extends AppCompatActivity {
     private void showErrorMessage(String message) {
         infoText.setText(message);
         infoText.setTextColor(ContextCompat.getColor(this, R.color.md_theme_light_error));
-        infoText.setAlpha(1f);
+        infoText.setVisibility(View.VISIBLE);
     }
 }
