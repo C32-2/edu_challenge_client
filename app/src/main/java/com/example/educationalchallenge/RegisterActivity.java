@@ -69,6 +69,7 @@ public class RegisterActivity extends AppCompatActivity {
                     progressBar.setVisibility(View.GONE);
                     Intent intent = new Intent(RegisterActivity.this, StartActivity.class);
                     startActivity(intent);
+                    finish();
                 } else {
                     progressBar.setVisibility(View.GONE);
                     showErrorMessage("Пользователь с таким именем или email уже существует!");

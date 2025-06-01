@@ -47,8 +47,6 @@ public class StartActivity extends AppCompatActivity {
         jwtManager = new JwtManager(this);
         apiService = ApiClient.getApiService();
 
-        jwtManager.clearToken();
-
         if (jwtManager.getToken() != null) {
             startActivity(new Intent(this, MainActivity.class));
             finish();
@@ -87,6 +85,7 @@ public class StartActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     jwtManager.saveToken(response.body().getToken());
                     progressBar.setVisibility(View.GONE);
+                    Toast.makeText(StartActivity.this, "Добро пожаловать!", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(StartActivity.this, MainActivity.class));
                     finish();
                 } else {
