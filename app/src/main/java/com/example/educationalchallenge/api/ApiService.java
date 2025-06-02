@@ -2,12 +2,10 @@ package com.example.educationalchallenge.api;
 
 import com.example.educationalchallenge.dto.*;
 
+import java.util.List;
+
 import retrofit2.Call;
-import retrofit2.http.Body;
-import retrofit2.http.GET;
-import retrofit2.http.Header;
-import retrofit2.http.POST;
-import retrofit2.http.Path;
+import retrofit2.http.*;
 
 public interface ApiService {
     @POST("/api/users/login")
@@ -17,5 +15,11 @@ public interface ApiService {
     Call<Void> register(@Body RegisterRequest request);
 
     @GET("/api/users/{userId}")
-    Call<ProfileResponse> getProfile(@Path("userId") String userId, @Header("Authorization") String authToken);
+    Call<ProfileResponse> getProfile(@Path("userId") String userId, @Header("Authorization") String token);
+
+    @POST("/api/topics")
+    Call<Void> addTopic(@Body AddTopicRequest request, @Header("Authorization") String token);
+
+    @GET("/api/topics")
+    Call<List<TopicResponse>> getAllTopics(@Header("Authorization") String token);
 }

@@ -84,7 +84,7 @@ public class StartActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    jwtManager.saveToken(response.body().getToken());
+                    jwtManager.saveToken(response.body().token);
                     progressBar.setVisibility(View.GONE);
                     Toast.makeText(StartActivity.this, "Добро пожаловать!", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(StartActivity.this, MainActivity.class));

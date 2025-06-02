@@ -83,15 +83,4 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.fragment_container, fragment)
                 .commit();
     }
-
-    private void loadFragment(Fragment fragment, int titleResId) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .commit();
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(titleResId);
-        }
-    }
 }
