@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.educationalchallenge.R;
 import com.example.educationalchallenge.adapters.OptionAdapter;
-import com.example.educationalchallenge.models.OptionItem;
+import com.example.educationalchallenge.items.OptionItem;
 
 import java.util.ArrayList;
 import java.util.List;

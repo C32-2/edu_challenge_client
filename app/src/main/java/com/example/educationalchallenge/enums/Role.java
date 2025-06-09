@@ -9,7 +9,7 @@ public enum Role {
         try {
             return Role.valueOf(roleString.toUpperCase());
         } catch (Exception e) {
-            return null; // или throw IllegalArgumentException
+            return null;
         }
     }
 }

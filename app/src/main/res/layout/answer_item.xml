@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <EditText
+        android:id="@+id/edit_text_answer"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:hint="Введите ответ" />
+
+    <CheckBox
+        android:id="@+id/checkbox_correct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Верный" />
+
+    <ImageButton
+        android:id="@+id/button_remove_answer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/delete"
+        android:contentDescription="Удалить"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="12dp" />
+</LinearLayout>

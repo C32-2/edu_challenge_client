@@ -46,7 +46,6 @@ public class StartActivity extends AppCompatActivity {
 
         jwtManager = new JwtManager(this);
         apiService = ApiClient.getApiService();
-        jwtManager.clearToken();
 
         if (jwtManager.getToken() != null) {
             startActivity(new Intent(this, MainActivity.class));

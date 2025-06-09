@@ -1,4 +1,4 @@
-package com.example.educationalchallenge.models;
+package com.example.educationalchallenge.items;
 
 public class OptionItem {
     private String title;

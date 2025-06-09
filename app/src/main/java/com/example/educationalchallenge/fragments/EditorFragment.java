@@ -10,10 +10,11 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.educationalchallenge.AddQuestionActivity;
 import com.example.educationalchallenge.AddTopicActivity;
 import com.example.educationalchallenge.R;
 import com.example.educationalchallenge.adapters.OptionAdapter;
-import com.example.educationalchallenge.models.OptionItem;
+import com.example.educationalchallenge.items.OptionItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,8 @@ public class EditorFragment extends Fragment {
             Intent intent = new Intent(requireContext(), AddTopicActivity.class);
             startActivity(intent);
         } else if (title.equals("Добавить вопрос в базу")) {
-
+            Intent intent = new Intent(requireContext(), AddQuestionActivity.class);
+            startActivity(intent);
         } else if (title.equals("Составить квиз")) {
 
         } else if (title.equals("Назначить редактора")) {

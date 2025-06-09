@@ -22,4 +22,7 @@ public interface ApiService {
 
     @GET("/api/topics")
     Call<List<TopicResponse>> getAllTopics(@Header("Authorization") String token);
+
+    @POST("/api/questions")
+    Call<Void> addQuestion(@Body AddQuestionRequest request, @Header("Authorization") String token);
 }
