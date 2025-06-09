@@ -25,4 +25,14 @@ public interface ApiService {
 
     @POST("/api/questions")
     Call<Void> addQuestion(@Body AddQuestionRequest request, @Header("Authorization") String token);
+
+    @GET("/api/questions")
+    Call<List<QuestionResponse>> searchQuestion(
+            @Query("topicId") Long topicId,
+            @Query("query") String query,
+            @Header("Authorization") String token
+    );
+
+    @POST("/api/quizzes")
+    Call<Void> addQuiz(@Body AddQuizRequest request, @Header("Authorization") String token);
 }

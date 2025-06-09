@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.educationalchallenge.AddQuestionActivity;
+import com.example.educationalchallenge.AddQuizActivity;
 import com.example.educationalchallenge.AddTopicActivity;
 import com.example.educationalchallenge.R;
 import com.example.educationalchallenge.adapters.OptionAdapter;
@@ -53,7 +54,8 @@ public class EditorFragment extends Fragment {
             Intent intent = new Intent(requireContext(), AddQuestionActivity.class);
             startActivity(intent);
         } else if (title.equals("Составить квиз")) {
-
+            Intent intent = new Intent(requireContext(), AddQuizActivity.class);
+            startActivity(intent);
         } else if (title.equals("Назначить редактора")) {
 
         }

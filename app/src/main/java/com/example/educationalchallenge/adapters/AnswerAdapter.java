@@ -128,7 +128,6 @@ public class AnswerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    // Упрощённый TextWatcher
     private static class SimpleTextWatcher implements TextWatcher {
         private final OnTextChangedCallback callback;
 

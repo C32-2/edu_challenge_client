@@ -48,19 +48,15 @@ public class AddQuestionActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_add_question);
 
-        allTopics = new ArrayList<>();
         apiService = ApiClient.getApiService();
         jwtManager = new JwtManager(this);
-
-        fetchTopics();
-        initViews();
-        setupListeners();
-
+        allTopics = new ArrayList<>();
         answerList = new ArrayList<>();
 
-        answerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        answerAdapter = new AnswerAdapter(answerList);
-        answerRecyclerView.setAdapter(answerAdapter);
+        initViews();
+        initRecyclerView();
+        setupListeners();
+        fetchTopics();
     }
 
     private void initViews() {
@@ -70,6 +66,12 @@ public class AddQuestionActivity extends AppCompatActivity {
         questionEditText = findViewById(R.id.question_edit_text);
     }
 
+    private void initRecyclerView() {
+        answerAdapter = new AnswerAdapter(answerList);
+        answerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        answerRecyclerView.setAdapter(answerAdapter);
+    }
+
     private void setupListeners() {
         addQuestionButton.setOnClickListener(v -> addQuestion());
     }
@@ -77,59 +79,64 @@ public class AddQuestionActivity extends AppCompatActivity {
     private void fetchTopics() {
         apiService.getAllTopics("Bearer " + jwtManager.getToken())
                 .enqueue(new Callback<List<TopicResponse>>() {
-            @Override
-            public void onResponse(Call<List<TopicResponse>> call, Response<List<TopicResponse>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    allTopics = response.body();
-
-                    List<String> topicNames = new ArrayList<>();
-                    for (TopicResponse topic : allTopics) {
-                        topicNames.add(topic.toString());
+                    @Override
+                    public void onResponse(Call<List<TopicResponse>> call, Response<List<TopicResponse>> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            allTopics = response.body();
+                            setupTopicSearch(allTopics);
+                        } else {
+                            Log.e("API", "Ошибка загрузки тем: " + response.code() + ", " + response.message());
+                        }
                     }
 
-                    ArrayAdapter<TopicResponse> adapter = new ArrayAdapter<>(
-                            AddQuestionActivity.this,
-                            R.layout.topic_item,
-                            allTopics
-                    );
-                    topicSearch.setAdapter(adapter);
-                    topicSearch.setThreshold(1);
+                    @Override
+                    public void onFailure(Call<List<TopicResponse>> call, Throwable t) {
+                        Log.e("API", "Ошибка загрузки тем", t);
+                    }
+                });
+    }
 
-                    topicSearch.setOnItemClickListener((parent, view, position, id) -> {
-                        TopicResponse selectedTopic = (TopicResponse)parent.getItemAtPosition(position);
-                        currentTopicId = selectedTopic.id;
-                    });
-                }
-            }
+    private void setupTopicSearch(List<TopicResponse> topics) {
+        ArrayAdapter<TopicResponse> adapter = new ArrayAdapter<>(
+                this,
+                R.layout.topic_item,
+                topics
+        );
+        topicSearch.setAdapter(adapter);
+        topicSearch.setThreshold(1);
 
-            @Override
-            public void onFailure(Call<List<TopicResponse>> call, Throwable t) {
-                Log.e("API", "Ошибка загрузки тем", t);
-            }
+        topicSearch.setOnItemClickListener((parent, view, position, id) -> {
+            TopicResponse selectedTopic = (TopicResponse) parent.getItemAtPosition(position);
+            currentTopicId = selectedTopic.id;
         });
     }
 
     private void addQuestion() {
         String text = questionEditText.getText().toString().trim();
+
+        if (text.isEmpty() || currentTopicId == null || answerList.isEmpty()) {
+            Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         AddQuestionRequest request = new AddQuestionRequest(text, currentTopicId, answerList);
         apiService.addQuestion(request, "Bearer " + jwtManager.getToken())
                 .enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(AddQuestionActivity.this, "Вопрос добавлен!", Toast.LENGTH_SHORT).show();
-                    clearActivity();
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(AddQuestionActivity.this, "Вопрос добавлен!", Toast.LENGTH_SHORT).show();
+                            clearActivity();
+                        } else {
+                            Log.e("API", "Ошибка при добавлении: " + response.code() + ", " + response.message());
+                        }
+                    }
 
-                } else {
-                    Log.e("API", "Ошибка при добавлении: " + response.code() + ", " + response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-
-            }
-        });
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        Log.e("API", "Ошибка сети при добавлении вопроса", t);
+                    }
+                });
     }
 
     private void clearActivity() {
