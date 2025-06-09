@@ -103,11 +103,18 @@ public class AddQuestionActivity extends AppCompatActivity {
                 topics
         );
         topicSearch.setAdapter(adapter);
-        topicSearch.setThreshold(1);
+        topicSearch.setThreshold(0);
 
-        topicSearch.setOnItemClickListener((parent, view, position, id) -> {
-            TopicResponse selectedTopic = (TopicResponse) parent.getItemAtPosition(position);
-            currentTopicId = selectedTopic.id;
+        topicSearch.setOnClickListener(v -> {
+            if (topicSearch.getText().toString().isEmpty()) {
+                topicSearch.showDropDown();
+            }
+        });
+
+        topicSearch.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus && !topicSearch.isPopupShowing()) {
+                topicSearch.showDropDown();
+            }
         });
     }
 

@@ -35,4 +35,10 @@ public interface ApiService {
 
     @POST("/api/quizzes")
     Call<Void> addQuiz(@Body AddQuizRequest request, @Header("Authorization") String token);
+
+    @GET("/api/quizzes")
+    Call<List<QuizResponse>> getQuizzes(
+            @Query("topicId") Long topicId,
+            @Header("Authorization") String token
+    );
 }

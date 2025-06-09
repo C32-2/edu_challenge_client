@@ -1,5 +1,6 @@
 package com.example.educationalchallenge.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.educationalchallenge.QuizActivity;
 import com.example.educationalchallenge.R;
 import com.example.educationalchallenge.adapters.OptionAdapter;
 import com.example.educationalchallenge.items.OptionItem;
@@ -43,9 +45,8 @@ public class MainFragment extends Fragment {
     private void optionTransition(OptionItem item) {
         final String title = item.getTitle();
         if (title.equals("Решать квизы")) {
-
-        } else if (title.equals("Решать судоку")) {
-
-        }
+            Intent intent = new Intent(getContext(), QuizActivity.class);
+            startActivity(intent);
+        } else if (title.equals("Решать судоку")) {}
     }
 }
