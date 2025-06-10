@@ -16,6 +16,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ChangeRoleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".QuizDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".QuizActivity"
             android:exported="false" />
         <activity

@@ -32,8 +32,6 @@ public class MainFragment extends Fragment {
 
         List<OptionItem> options = new ArrayList<>();
         options.add(new OptionItem("Решать квизы", "Проверяй свои знания!"));
-        options.add(new OptionItem("Решать судоку", "Тренируй свою логику!"));
-        options.add(new OptionItem("Решать кроссворды", "Стань богом эрудиции!"));
 
         optionAdapter = new OptionAdapter(options, option -> optionTransition(option));
 

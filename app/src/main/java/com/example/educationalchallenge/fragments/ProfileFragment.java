@@ -2,7 +2,6 @@ package com.example.educationalchallenge.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,14 +34,13 @@ public class ProfileFragment extends Fragment {
             idTextView, quizzesSolved, createdAtTextView;
     private ProgressBar expProgressBar, loadProgressBar;
     private Button editProfileButton, logoutButton;
-
     private JwtManager jwtManager;
     private ApiService apiService;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        bindViews(view);
+        initViews(view);
 
         setViewsVisibility(false);
 
@@ -68,7 +66,7 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
-    private void bindViews(View view) {
+    private void initViews(View view) {
         usernameTextView = view.findViewById(R.id.username_text);
         nicknameTextView = view.findViewById(R.id.nickname_text);
         roleTextView = view.findViewById(R.id.role_text);

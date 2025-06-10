@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.nav_main) {
             selectedFragment = new MainFragment();
         } else if (id == R.id.nav_statistics) {
-            selectedFragment = new StatisticsFragment();
+            selectedFragment = new LeaderboardFragment();
         } else if (id == R.id.nav_editors) {
             if (role != Role.USER) {
                 selectedFragment = new EditorFragment();

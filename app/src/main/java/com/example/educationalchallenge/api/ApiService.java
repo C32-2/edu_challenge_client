@@ -1,6 +1,7 @@
 package com.example.educationalchallenge.api;
 
 import com.example.educationalchallenge.dto.*;
+import com.example.educationalchallenge.enums.Role;
 
 import java.util.List;
 
@@ -39,6 +40,19 @@ public interface ApiService {
     @GET("/api/quizzes")
     Call<List<QuizResponse>> getQuizzes(
             @Query("topicId") Long topicId,
+            @Header("Authorization") String token
+    );
+
+    @GET("/api/users/leaderboard")
+    Call<List<ProfileResponse>> getLeaderboard(@Header("Authorization") String token);
+
+    @GET("/api/users")
+    Call<List<ProfileResponse>> getAllUsers(@Header("Authorization") String token);
+
+    @POST("/api/users/change-role")
+    Call<Void> changeRole(
+            @Query("id") Long id,
+            @Query("role") Role role,
             @Header("Authorization") String token
     );
 }

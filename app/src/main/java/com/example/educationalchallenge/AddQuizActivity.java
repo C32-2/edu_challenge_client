@@ -1,5 +1,8 @@
 package com.example.educationalchallenge;
 
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -78,13 +81,13 @@ public class AddQuizActivity extends AppCompatActivity {
         receivedAdapter = new ReceivedQuestionAdapter(receivedQuestions, question -> {
             if (!selectedQuestions.contains(question)) {
                 selectedQuestions.add(question);
+
                 selectedAdapter.notifyDataSetChanged();
             }
         });
 
         selectedAdapter = new SelectedQuestionAdapter(selectedQuestions, question -> {
-            selectedQuestions.remove(question);
-            selectedAdapter.notifyDataSetChanged();
+            selectedAdapter.removeQuestion(question);
         });
 
         receivedRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -95,10 +98,12 @@ public class AddQuizActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        addQuizButton.setOnClickListener(v -> addQuiz());
+        addQuizButton.setOnClickListener(v -> showTitleDialog());
 
         questionText.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                fetchQuestions();
+            }
             @Override public void afterTextChanged(Editable s) {}
 
             @Override
@@ -133,16 +138,17 @@ public class AddQuizActivity extends AppCompatActivity {
         );
 
         topicSearch.setAdapter(adapter);
-        topicSearch.setThreshold(1);
+        topicSearch.setThreshold(0);
         topicSearch.setOnItemClickListener((parent, view, position, id) -> {
             TopicResponse selected = (TopicResponse) parent.getItemAtPosition(position);
             currentTopicId = selected.id;
+            fetchQuestions();
         });
     }
 
     private void fetchQuestions() {
         String query = questionText.getText().toString().trim();
-        if (currentTopicId == null || query.isEmpty()) return;
+        if (currentTopicId == null) return;
 
         apiService.searchQuestion(currentTopicId, query, authHeader())
                 .enqueue(new Callback<List<QuestionResponse>>() {
@@ -163,7 +169,7 @@ public class AddQuizActivity extends AppCompatActivity {
                 });
     }
 
-    private void addQuiz() {
+    private void addQuiz(String title) {
         if (currentTopicId == null || selectedQuestions.isEmpty()) {
             Toast.makeText(this, "Выберите тему и хотя бы один вопрос", Toast.LENGTH_SHORT).show();
             return;
@@ -173,7 +179,6 @@ public class AddQuizActivity extends AppCompatActivity {
                 .map(q -> q.id)
                 .collect(Collectors.toList());
 
-        String title = topicSearch.getText().toString().trim();
         AddQuizRequest request = new AddQuizRequest(title, currentTopicId, questionIds);
 
         apiService.addQuiz(request, authHeader()).enqueue(new Callback<Void>() {
@@ -192,6 +197,32 @@ public class AddQuizActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void showTitleDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_quiz_title);
+
+        EditText titleInput = dialog.findViewById(R.id.editTextTitle);
+        Button buttonCreate = dialog.findViewById(R.id.buttonCreate);
+        Button buttonCancel = dialog.findViewById(R.id.buttonCancel);
+
+        buttonCreate.setOnClickListener(v -> {
+            String title = titleInput.getText().toString().trim();
+
+            if (title.isEmpty()) {
+                Toast.makeText(this, "Введите название квиза", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            addQuiz(title);
+            dialog.dismiss();
+        });
+
+        buttonCancel.setOnClickListener(v -> dialog.dismiss());
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+    }
+
 
     private String authHeader() {
         return "Bearer " + jwtManager.getToken();

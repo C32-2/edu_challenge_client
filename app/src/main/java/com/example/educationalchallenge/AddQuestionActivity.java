@@ -116,12 +116,18 @@ public class AddQuestionActivity extends AppCompatActivity {
                 topicSearch.showDropDown();
             }
         });
+
+        topicSearch.setOnItemClickListener((parent, view, position, id) -> {
+            TopicResponse selectedTopic = (TopicResponse) parent.getItemAtPosition(position);
+            currentTopicId = selectedTopic.id;
+        });
     }
 
     private void addQuestion() {
         String text = questionEditText.getText().toString().trim();
 
-        if (text.isEmpty() || currentTopicId == null || answerList.isEmpty()) {
+        if (text.isEmpty() || currentTopicId == null) {
+            Log.d("Бреды", text + " " + currentTopicId.toString());
             Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show();
             return;
         }

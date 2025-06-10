@@ -8,4 +8,9 @@ public class ProfileResponse {
     public Integer exp;
     public String role;
     public Integer quizzesSolved;
+
+    @Override
+    public String toString() {
+        return username;
+    }
 }

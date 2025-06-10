@@ -1,5 +1,6 @@
 package com.example.educationalchallenge;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.example.educationalchallenge.dto.QuizResponse;
 import com.example.educationalchallenge.dto.TopicResponse;
 import com.example.educationalchallenge.security.JwtManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -33,7 +35,8 @@ public class QuizActivity extends AppCompatActivity {
     private ApiService apiService;
     private JwtManager jwtManager;
     private List<TopicResponse> allTopics;
-    private List<QuizResponse> quizzes;
+    private List<QuizResponse> quizzes = new ArrayList<>();
+    private boolean isFirstSelection = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,14 +46,24 @@ public class QuizActivity extends AppCompatActivity {
         apiService = ApiClient.getApiService();
         jwtManager = new JwtManager(this);
 
-        topicSpinner = findViewById(R.id.topicSpinner);
-        quizRecyclerView = findViewById(R.id.quizRecyclerView);
-        quizAdapter = new QuizAdapter(quizzes);
+        initViews();
+        setupRecyclers();
+        fetchTopics();
+    }
 
+    private void setupRecyclers() {
+        quizAdapter = new QuizAdapter(quizzes, quiz -> {
+            Intent intent = new Intent(this, QuizDetailActivity.class);
+            intent.putExtra("quiz", quiz);
+            startActivity(intent);
+        });
         quizRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         quizRecyclerView.setAdapter(quizAdapter);
+    }
 
-        fetchTopics();
+    private void initViews() {
+        topicSpinner = findViewById(R.id.topicSpinner);
+        quizRecyclerView = findViewById(R.id.quizRecyclerView);
     }
 
     private void fetchTopics() {
@@ -63,12 +76,14 @@ public class QuizActivity extends AppCompatActivity {
                             setupTopicSpinner(allTopics);
                         } else {
                             Log.e("API", "Ошибка загрузки тем: " + response.code() + ", " + response.message());
+                            Toast.makeText(QuizActivity.this, "Не удалось загрузить темы", Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
                     public void onFailure(Call<List<TopicResponse>> call, Throwable t) {
                         Log.e("API", "Ошибка загрузки тем", t);
+                        Toast.makeText(QuizActivity.this, "Ошибка сети при загрузке тем", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -91,36 +106,50 @@ public class QuizActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                // ничего не делаем
             }
         });
+
+        // Заставляем спиннер выбрать первый элемент и загрузить квизы по нему сразу
+        if (!topics.isEmpty()) {
+            topicSpinner.setSelection(0);
+            loadQuizzes(topics.get(0).id);
+        }
     }
 
     private void loadQuizzes(Long topicId) {
         apiService.getQuizzes(topicId, "Bearer " + jwtManager.getToken())
                 .enqueue(new Callback<List<QuizResponse>>() {
-            @Override
-            public void onResponse(Call<List<QuizResponse>> call, Response<List<QuizResponse>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    quizAdapter.setQuizzes(response.body());
-                } else {
-                    Toast.makeText(
-                            QuizActivity.this,
-                            "Ошибка загрузки квизов: " + response.code(),
-                            Toast.LENGTH_SHORT
-                    ).show();
-                }
-            }
+                    @Override
+                    public void onResponse(Call<List<QuizResponse>> call, Response<List<QuizResponse>> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<QuizResponse> loadedQuizzes = response.body();
+                            quizAdapter.setQuizzes(loadedQuizzes);
+                            if (loadedQuizzes.isEmpty()) {
+                                Toast.makeText(
+                                        QuizActivity.this,
+                                        "Нет доступных квизов для этой темы",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                            }
+                        } else {
+                            Toast.makeText(
+                                    QuizActivity.this,
+                                    "Ошибка загрузки квизов: " + response.code(),
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        }
+                    }
 
-            @Override
-            public void onFailure(Call<List<QuizResponse>> call, Throwable t) {
-                Toast.makeText(
-                        QuizActivity.this,
-                        "Ошибка загрузки квизов",
-                        Toast.LENGTH_SHORT
-                ).show();
-                Log.e("API", "Ошибка загрузки квизов", t);
-            }
-        });
+                    @Override
+                    public void onFailure(Call<List<QuizResponse>> call, Throwable t) {
+                        Toast.makeText(
+                                QuizActivity.this,
+                                "Ошибка загрузки квизов",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                        Log.e("API", "Ошибка загрузки квизов", t);
+                    }
+                });
     }
 }

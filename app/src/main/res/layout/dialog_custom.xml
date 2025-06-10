@@ -26,7 +26,6 @@
         android:id="@+id/button_ok"
         android:text="Продолжить"
         android:layout_width="match_parent"
-        android:backgroundTint="@color/md_theme_dark_error"
         android:layout_height="wrap_content" />
 
     <Button

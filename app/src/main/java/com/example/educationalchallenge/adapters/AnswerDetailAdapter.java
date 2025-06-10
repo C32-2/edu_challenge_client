@@ -8,27 +8,26 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.educationalchallenge.R;
-import com.example.educationalchallenge.dto.QuestionResponse;
+import com.example.educationalchallenge.dto.Answer;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ReceivedQuestionAdapter extends RecyclerView.Adapter<ReceivedQuestionAdapter.ViewHolder> {
+public class AnswerDetailAdapter extends RecyclerView.Adapter<AnswerDetailAdapter.ViewHolder> {
 
-    private List<QuestionResponse> questions;
+    private List<Answer> answers;
     private final OnOptionClickListener listener;
 
     public interface OnOptionClickListener {
-        void onOptionClick(QuestionResponse item);
+        void onOptionClick(Answer item);
     }
 
-    public ReceivedQuestionAdapter(List<QuestionResponse> questions, OnOptionClickListener listener) {
-        this.questions = questions;
+    public AnswerDetailAdapter(List<Answer> answers, OnOptionClickListener listener) {
+        this.answers = answers;
         this.listener = listener;
     }
 
-    public void setQuestions(List<QuestionResponse> newQuestions) {
-        this.questions = newQuestions;
+    public void setAnswers(List<Answer> newAnswers) {
+        this.answers = newAnswers;
         notifyDataSetChanged();
     }
 
@@ -41,14 +40,14 @@ public class ReceivedQuestionAdapter extends RecyclerView.Adapter<ReceivedQuesti
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        QuestionResponse item = questions.get(position);
+        Answer item = answers.get(position);
         holder.text.setText(item.text);
         holder.itemView.setOnClickListener(v -> listener.onOptionClick(item));
     }
 
     @Override
     public int getItemCount() {
-        return questions.size();
+        return answers == null ? 0 : answers.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

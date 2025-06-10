@@ -18,8 +18,6 @@ public class SelectedQuestionAdapter extends RecyclerView.Adapter<SelectedQuesti
 
     private List<QuestionResponse> questions;
     private final OnDeleteClickListener deleteListener;
-
-    // Интерфейс для колбэка удаления
     public interface OnDeleteClickListener {
         void onDeleteClick(QuestionResponse item);
     }
@@ -46,7 +44,6 @@ public class SelectedQuestionAdapter extends RecyclerView.Adapter<SelectedQuesti
         QuestionResponse item = questions.get(position);
         holder.text.setText(item.text);
 
-        // Клик только по кнопке удаления
         holder.removeButton.setOnClickListener(v -> {
             if (deleteListener != null) {
                 deleteListener.onDeleteClick(item);
@@ -57,6 +54,14 @@ public class SelectedQuestionAdapter extends RecyclerView.Adapter<SelectedQuesti
     @Override
     public int getItemCount() {
         return questions.size();
+    }
+
+    public void removeQuestion(QuestionResponse question) {
+        int index = questions.indexOf(question);
+        if (index != -1) {
+            questions.remove(index);
+            notifyItemRemoved(index);
+        }
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

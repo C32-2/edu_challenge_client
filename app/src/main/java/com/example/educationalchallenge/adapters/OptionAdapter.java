@@ -14,7 +14,7 @@ import java.util.List;
 
 public class OptionAdapter extends RecyclerView.Adapter<OptionAdapter.ViewHolder> {
 
-    private final List<OptionItem> options;
+    private List<OptionItem> options;
     private final OnOptionClickListener listener;
     public interface OnOptionClickListener {
         void onOptionClick(OptionItem item);
@@ -23,6 +23,11 @@ public class OptionAdapter extends RecyclerView.Adapter<OptionAdapter.ViewHolder
     public OptionAdapter(List<OptionItem> options, OnOptionClickListener listener) {
         this.options = options;
         this.listener = listener;
+    }
+
+    public void updateData(List<OptionItem> newItems) {
+        this.options = newItems;
+        notifyDataSetChanged();
     }
 
     @Override

@@ -17,9 +17,14 @@ import java.util.List;
 
 public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.QuizViewHolder> {
     private List<QuizResponse> quizzes;
+    private final OnQuizClickListener listener;
+    public interface OnQuizClickListener {
+        void onQuizClick(QuizResponse quiz);
+    }
 
-    public QuizAdapter(List<QuizResponse> quizzes) {
+    public QuizAdapter(List<QuizResponse> quizzes, OnQuizClickListener listener) {
         this.quizzes = quizzes;
+        this.listener = listener;
     }
 
     public void setQuizzes(List<QuizResponse> newQuizzes) {
@@ -39,7 +44,8 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.QuizViewHolder
     public void onBindViewHolder(@NonNull QuizViewHolder holder, int position) {
         QuizResponse quiz = quizzes.get(position);
         holder.quizTitle.setText(quiz.title);
-        // Можно прикрутить иконку по id или title
+        holder.itemView.setOnClickListener(v ->
+                listener.onQuizClick(quizzes.get(holder.getAdapterPosition())));
     }
 
     @Override

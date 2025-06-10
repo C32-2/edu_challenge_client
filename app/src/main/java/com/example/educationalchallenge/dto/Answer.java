@@ -1,6 +1,8 @@
 package com.example.educationalchallenge.dto;
 
-public class Answer {
+import java.io.Serializable;
+
+public class Answer implements Serializable {
     public Long id;
     public String text;
     public boolean isCorrect;
